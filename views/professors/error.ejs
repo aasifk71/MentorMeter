@@ -1,0 +1,22 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container py-5">
+  <div class="card shadow-lg border-0 rounded-4 p-5 mx-auto text-center" style="max-width: 600px;">
+    <h1 class="display-4 text-danger mb-3">😢 Oops!</h1>
+    <h4 class="fw-semibold mb-4 text-secondary"><%= err.message || "An unexpected error occurred." %></h4>
+
+    <p class="text-muted mb-4">
+      It seems something went wrong. Please try again or contact support if the problem persists.
+    </p>
+
+    <a href="/professors" class="btn btn-primary px-4 me-2 mb-2">
+      <i class="bi bi-arrow-left-circle"></i> Go Back
+    </a>
+    <a href="/" class="btn btn-outline-secondary px-4 mb-2">
+      <i class="bi bi-house-door"></i> Home
+    </a>
+  </div>
+</div>
+
+
+

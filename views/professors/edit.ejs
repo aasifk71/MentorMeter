@@ -1,0 +1,63 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container py-5">
+  <div class="card shadow-lg border-0 rounded-4 p-5 mx-auto" style="max-width: 700px;">
+    <h2 class="fw-bold mb-4 text-primary text-center">Edit Professor Info</h2>
+
+    <form action="/professors/<%= professor._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+      <!-- Professor Name -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Name</label>
+        <input name="professor[name]" type="text" value="<%= professor.name %>" class="form-control" required>
+      </div>
+
+      <!-- Department -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Department</label>
+        <input name="professor[department]" type="text" value="<%= professor.department %>" class="form-control">
+      </div>
+
+      <!-- University (fixed) -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">University</label>
+        <select class="form-control" disabled>
+          <option selected>Delhi Technological University</option>
+        </select>
+        <input type="hidden" name="professor[university]" value="Delhi Technological University">
+      </div>
+
+      <!-- Description -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Description</label>
+        <textarea name="professor[description]" class="form-control" rows="4"><%= professor.description || "" %></textarea>
+      </div>
+
+      <!-- Image Update with Preview -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Profile Picture (optional)</label>
+        <input type="file" name="image" class="form-control" accept="image/*" onchange="previewImage(event)">
+
+        <div class="mt-3 text-center">
+          <p>Current Image:</p>
+          <img id="imagePreview" src="<%= professor.image && professor.image.url ? professor.image.url : '/images/default-professor.jpg' %>" 
+               alt="Profile Preview" 
+               class="rounded-circle border shadow-sm" 
+               style="width: 120px; height: 120px; object-fit: cover;">
+        </div>
+      </div>
+
+      <button class="btn btn-primary w-100 fw-semibold">Update Professor</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function previewImage(event) {
+    const output = document.getElementById('imagePreview');
+    if(event.target.files[0]) {
+      output.src = URL.createObjectURL(event.target.files[0]);
+    }
+  }
+</script>
+
+

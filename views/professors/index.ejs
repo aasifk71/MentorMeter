@@ -1,0 +1,181 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container py-5">
+  <h1 class="text-center fw-bold mb-5 text-primary" style="letter-spacing:-0.5px;">All Professors</h1>
+
+  <!-- 🔹 Department Filter Dropdown -->
+  <div class="d-flex justify-content-center mb-5">
+    <div class="dropdown">
+      <button class="btn btn-outline-primary rounded-pill shadow-sm px-4" 
+              type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        Filter by Department
+      </button>
+      <ul class="dropdown-menu border-0 shadow-sm rounded-4" id="departmentFilter">
+        <li><a class="dropdown-item active rounded-3" href="#" data-filter="all">All Departments</a></li>
+        <% 
+          const departments = [...new Set(professors.map(p => p.department))];
+          departments.forEach(dep => { 
+        %>
+          <li><a class="dropdown-item rounded-3" href="#" data-filter="<%= dep %>"><%= dep %></a></li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 🔹 Professor Cards -->
+  <% if (professors.length > 0) { %>
+    <div class="row g-4" id="professorGrid">
+      <% professors.forEach(prof => { %>
+        <div class="col-12 col-sm-6 col-md-4 professor-card" data-department="<%= prof.department %>">
+          <div class="prof-card shadow-sm border-0 rounded-4 p-4 text-center bg-white">
+            <img 
+              src="<%= prof.image && prof.image.url ? prof.image.url : '/images/default-professor.jpg' %>" 
+              alt="<%= prof.name %>" 
+              class="rounded-circle mb-3 border border-3 border-light shadow-sm"
+              style="width:90px; height:90px; object-fit:cover;"
+            >
+
+            <h5 class="fw-semibold mb-1 text-dark"><%= prof.name %></h5>
+            <p class="text-muted mb-2 small"><%= prof.department %></p>
+
+            <div class="rating mb-4">
+              <i class="fa fa-star text-warning"></i>
+              <span class="fw-semibold ms-1 text-dark">
+                <%= prof.averageRating ? prof.averageRating.toFixed(2) : 'N/A' %>
+              </span>
+            </div>
+
+            <a href="/professors/<%= prof._id %>" class="btn btn-primary rounded-pill px-4 w-75 shadow-sm">
+              View Details
+            </a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p class="text-muted text-center mt-5">No professors available yet.</p>
+  <% } %>
+</div>
+
+<!-- 🔹 JS Filter Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const filterItems = document.querySelectorAll("#departmentFilter .dropdown-item");
+    const cards = document.querySelectorAll(".professor-card");
+
+    filterItems.forEach(item => {
+      item.addEventListener("click", (e) => {
+        e.preventDefault();
+        const filter = item.getAttribute("data-filter");
+
+        filterItems.forEach(i => i.classList.remove("active"));
+        item.classList.add("active");
+
+        cards.forEach(card => {
+          const department = card.getAttribute("data-department");
+          if (filter === "all" || department === filter) {
+            card.style.display = "block";
+            card.classList.add("fade-in");
+          } else {
+            card.style.display = "none";
+            card.classList.remove("fade-in");
+          }
+        });
+      });
+    });
+  });
+</script>
+
+<style>
+  body {
+    background: linear-gradient(180deg, #f9fbff 0%, #eef3fb 100%) !important;
+    font-family: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif !important;
+  }
+
+  /* Heading */
+  h1.text-primary {
+    color: #2D74DA !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.8px !important;
+  }
+
+  /* Filter Button */
+  #filterDropdown.btn-outline-primary {
+    border-color: #2D74DA !important;
+    color: #2D74DA !important;
+    border-radius: 14px !important;
+    font-weight: 500 !important;
+    padding: 10px 24px !important;
+    transition: .25s ease !important;
+  }
+  #filterDropdown.btn-outline-primary:hover {
+    background-color: #2D74DA !important;
+    color: #fff !important;
+  }
+
+  /* Dropdown Menu */
+  .dropdown-menu {
+    border-radius: 16px !important;
+    padding: 8px 0 !important;
+  }
+  .dropdown-item {
+    font-weight: 500 !important;
+    padding: 10px 20px !important;
+    border-radius: 10px !important;
+  }
+  .dropdown-item.active,
+  .dropdown-item:hover {
+    background-color: #2D74DA !important;
+    color: #fff !important;
+  }
+
+  /* Card Styling (Glass + Modern) */
+  .prof-card {
+    border-radius: 22px !important;
+    background: rgba(255, 255, 255, 0.88) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(230, 233, 250, 0.6) !important;
+    box-shadow: 0 6px 20px rgba(48, 123, 255, 0.12) !important;
+    transition: all .35s ease !important;
+  }
+  .prof-card:hover {
+    transform: translateY(-6px) scale(1.02) !important;
+    box-shadow: 0 16px 40px rgba(48, 123, 255, 0.18) !important;
+  }
+
+  /* Profile Image Glow */
+  .prof-card img {
+    border: 4px solid #fff !important;
+    box-shadow:
+      0 0 0 3px rgba(45, 116, 218, 0.25),
+      0 10px 20px rgba(0,0,0,0.12) !important;
+    transition: .35s ease !important;
+  }
+  .prof-card:hover img {
+    box-shadow:
+      0 0 0 5px rgba(45, 116, 218, 0.38),
+      0 14px 26px rgba(0,0,0,0.2) !important;
+  }
+
+  /* View Button */
+  .btn-primary {
+    background-color: #2D74DA !important;
+    border-radius: 14px !important;
+    border: none !important;
+    font-weight: 500 !important;
+    transition: .25s ease !important;
+  }
+  .btn-primary:hover {
+    background-color: #1E5DC2 !important;
+    transform: translateY(-2px) !important;
+  }
+
+  .fade-in {
+    animation: fadeIn .35s ease-in-out !important;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>

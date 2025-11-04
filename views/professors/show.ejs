@@ -1,0 +1,185 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container py-5">
+  <!-- Profile Card -->
+  <div class="card shadow-lg border-0 rounded-4 p-4 mb-5">
+    <div class="d-flex flex-wrap align-items-center gap-4">
+      <img 
+        src="<%= professor.image && professor.image.url ? professor.image.url : '/images/default-professor.jpg' %>"
+        alt="<%= professor.name %>"
+        class="rounded-circle border border-3 border-light shadow-sm"
+        style="width: 130px; height: 130px; object-fit: cover;"
+      >
+
+      <div class="flex-grow-1">
+        <h2 class="fw-bold mb-1 text-primary"><%= professor.name %></h2>
+        <p class="text-muted mb-1"><i class="bi bi-building"></i> <%= professor.department %></p>
+        <p class="text-muted mb-2"><i class="bi bi-mortarboard"></i> <%= professor.university %></p>
+
+        <% if (professor.description && professor.description.trim() !== "") { %>
+          <p class="text-secondary"><%= professor.description %></p>
+        <% } else { %>
+          <p class="text-muted fst-italic">No description provided.</p>
+        <% } %>
+      </div>
+
+      <!-- Overall Rating -->
+      <div class="ms-auto text-center">
+        <h4 class="fw-bold text-warning mb-1">
+          <%= professor.averageRating ? professor.averageRating.toFixed(2) : "N/A" %> ★
+        </h4>
+        <small class="text-muted">Overall Rating</small>
+      </div>
+    </div>
+
+    <!-- Admin Controls -->
+    <% if (currentUser && currentUser.isAdmin) { %>
+      <div class="mt-4 text-end">
+        <a href="/professors/<%= professor._id %>/edit" class="btn btn-outline-warning me-2">
+          <i class="bi bi-pencil-square"></i> Edit
+        </a>
+        <form 
+          action="/professors/<%= professor._id %>?_method=DELETE"
+          method="POST"
+          class="d-inline"
+          onsubmit="return confirm('Are you sure you want to delete this professor? This action cannot be undone.')">
+          <button class="btn btn-outline-danger">
+            <i class="bi bi-trash"></i> Delete
+          </button>
+        </form>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Rating Metrics -->
+  <div class="card shadow-sm border-0 rounded-4 p-4 mb-5">
+    <h4 class="fw-bold mb-4 text-center text-primary">Performance Overview</h4>
+    <div class="row text-center g-4">
+      <div class="col-md-4">
+        <h6 class="fw-semibold text-secondary">Attendance</h6>
+        <div class="progress" style="height: 12px;">
+          <div class="progress-bar bg-warning" style="width: <%= (attendanceAvg / 5) * 100 %>%"></div>
+        </div>
+        <p class="fw-semibold mt-2 mb-0"><%= attendanceAvg.toFixed(1) %> / 5</p>
+        <small class="text-muted">(<%= professor.reviews.length %> ratings)</small>
+      </div>
+
+      <div class="col-md-4">
+        <h6 class="fw-semibold text-secondary">Grading Fairness</h6>
+        <div class="progress" style="height: 12px;">
+          <div class="progress-bar bg-info" style="width: <%= (gradingAvg / 5) * 100 %>%"></div>
+        </div>
+        <p class="fw-semibold mt-2 mb-0"><%= gradingAvg.toFixed(1) %> / 5</p>
+        <small class="text-muted">(<%= professor.reviews.length %> ratings)</small>
+      </div>
+
+      <div class="col-md-4">
+        <h6 class="fw-semibold text-secondary">FYP Support</h6>
+        <div class="progress" style="height: 12px;">
+          <div class="progress-bar bg-success" style="width: <%= (fypAvg / 5) * 100 %>%"></div>
+        </div>
+        <p class="fw-semibold mt-2 mb-0"><%= fypAvg.toFixed(1) %> / 5</p>
+        <small class="text-muted">(<%= professor.reviews.length %> ratings)</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviews Section -->
+  <div class="card shadow-sm border-0 rounded-4 p-4 mb-5">
+    <h4 class="fw-bold mb-4 text-primary">Student Reviews</h4>
+
+    <% if (professor.reviews && professor.reviews.length > 0) { %>
+      <% professor.reviews.forEach(review => { %>
+        <div class="border-start border-3 border-primary bg-light-subtle rounded-3 p-3 mb-3 shadow-sm">
+          <div class="d-flex justify-content-between align-items-center">
+            <strong><%= review.author.username %></strong>
+
+            <%
+              const individualAvg = ((review.attendance + review.grading + review.fypSupport) / 3).toFixed(1);
+              const stars = Math.round(individualAvg);
+            %>
+            <span class="text-warning">
+              <% for (let i = 0; i < stars; i++) { %>⭐<% } %>
+              <small class="text-muted"><%= individualAvg %>/5</small>
+            </span>
+          </div>
+
+          <p class="mt-2 mb-1"><%= review.body %></p>
+          <small class="text-muted"><%= review.createdAt ? review.createdAt.toDateString() : "Date not available" %></small>
+
+          <% if (currentUser && (review.author._id.equals(currentUser._id) || currentUser.isAdmin)) { %>
+            <div class="mt-2">
+              <a href="/professors/<%= professor._id %>/reviews/<%= review._id %>/edit"
+                 class="btn btn-sm btn-outline-primary me-2">
+                Edit
+              </a>
+              <form action="/professors/<%= professor._id %>/reviews/<%= review._id %>?_method=DELETE"
+                    method="POST"
+                    class="d-inline"
+                    onsubmit="return confirm('Are you sure you want to delete this review?');">
+                <button class="btn btn-sm btn-outline-danger">Delete</button>
+              </form>
+            </div>
+          <% } %>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p class="text-muted text-center">No reviews yet.</p>
+    <% } %>
+  </div>
+
+  <!-- Review Form -->
+  <% if (currentUser) { %>
+    <div class="card shadow-sm border-0 rounded-4 p-4 mb-5">
+      <h5 class="fw-bold mb-3 text-primary">Leave a Review</h5>
+
+      <div class="p-3 bg-light border-start border-4 border-danger rounded-3 mb-4">
+        <h6 class="fw-semibold text-danger mb-1">Review Guidelines</h6>
+        <p class="small text-muted mb-0">
+          Please be respectful and professional. Focus on your learning experience and avoid personal remarks.
+        </p>
+      </div>
+
+      <form action="/professors/<%= professor._id %>/reviews" method="POST">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Your Review</label>
+          <textarea name="review[body]" rows="3" class="form-control" placeholder="Share your experience..."></textarea>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Attendance</label>
+            <select name="review[attendance]" class="form-select">
+              <% for (let i = 5; i >= 1; i--) { %>
+                <option value="<%= i %>"><%= "⭐".repeat(i) %></option>
+              <% } %>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Grading Fairness</label>
+            <select name="review[grading]" class="form-select">
+              <% for (let i = 5; i >= 1; i--) { %>
+                <option value="<%= i %>"><%= "⭐".repeat(i) %></option>
+              <% } %>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">FYP Support</label>
+            <select name="review[fypSupport]" class="form-select">
+              <% for (let i = 5; i >= 1; i--) { %>
+                <option value="<%= i %>"><%= "⭐".repeat(i) %></option>
+              <% } %>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-primary px-4">Submit Review</button>
+      </form>
+    </div>
+  <% } else { %>
+    <p class="text-center text-muted">
+      You must be logged in to leave a review.
+      <a href="/login" class="fw-semibold text-decoration-none">Login here</a>.
+    </p>
+  <% } %>
+</div>

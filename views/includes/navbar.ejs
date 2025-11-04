@@ -1,0 +1,223 @@
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar shadow-sm">
+  <div class="container-fluid">
+    <!-- Brand -->
+<!-- Brand --> <a class="navbar-brand fw-bold fs-4" href="/" style="letter-spacing: 0.5px;"> <i class="bi bi-mortarboard-fill me-1"></i> Mentor Meter </a>
+
+
+
+    <!-- Toggler for mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar Content -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- Left Links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+  <li class="nav-item">
+    <a href="/professors" class="nav-link nav-link-modern">Professors</a>
+  </li>
+</ul>
+
+
+      <!-- 🔍 Center Search Bar -->
+      <div class="mx-auto d-none d-lg-block" style="width: 40%;" id="search-container">
+        <form action="/professors" method="GET" role="search" class="d-flex" id="prof-search-form">
+          <input 
+            type="text" 
+            name="q" 
+            id="liveSearchInput"
+            class="form-control me-2 search-box" 
+            placeholder="Search professors by name or department..."
+            value="<%= typeof query !== 'undefined' ? query : '' %>">
+          <button class="btn btn-light text-primary fw-semibold px-4 shadow-sm" type="submit">
+            Search
+          </button>
+        </form>
+      </div>
+
+      <!-- Right Side Buttons -->
+<ul class="navbar-nav ms-auto align-items-lg-center">
+
+  <% if (currentUser && currentUser.isAdmin) { %>
+    <li class="nav-item ms-3">
+      <a href="/professors/new" class="btn btn-warning text-dark fw-semibold px-3 shadow-sm">
+        + Add Professor
+      </a>
+    </li>
+  <% } %>
+
+  <% if (currentUser) { %>
+
+    <!-- ✅ Request Professor Button (ONLY when logged in) -->
+    <li class="nav-item ms-3">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSe0xA8IjPMI1prjbXtJGj6nFVsuQ8FQFImkJCQhpssxd8dYvw/viewform?usp=dialog" target="_blank" class="btn btn-outline-light px-3 fw-semibold shadow-sm">
+        Request Professor
+      </a>
+    </li>
+
+    <li class="nav-item ms-3">
+      <span class="text-white fw-semibold me-2">
+        👋 Hi, <%= currentUser.username %>
+        <% if (currentUser.isAdmin) { %>
+          <small class="badge bg-light text-dark ms-1">Admin</small>
+        <% } %>
+      </span>
+    </li>
+    <li class="nav-item ms-2">
+      <a href="/logout" class="btn btn-outline-light px-3 fw-semibold">Logout</a>
+    </li>
+
+  <% } else { %>
+    <li class="nav-item ms-3">
+      <a href="/login" class="btn btn-outline-light px-3 fw-semibold">Login</a>
+    </li>
+    <li class="nav-item ms-3">
+      <a href="/signup" class="btn btn-light text-primary px-3 fw-semibold shadow-sm">Sign Up</a>
+    </li>
+  <% } %>
+
+</ul>
+
+    </div>
+  </div>
+</nav>
+
+<!-- 🔍 Live Search Results -->
+<div id="liveSearchResults" class="live-search-results"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("liveSearchInput");
+  const results = document.getElementById("liveSearchResults");
+
+  input?.addEventListener("input", async () => {
+    const query = input.value.trim();
+    if (!query) {
+      results.classList.remove("active");
+      results.innerHTML = "";
+      return;
+    }
+
+    const res = await fetch(`/professors/search/live?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+
+    if (data.length === 0) {
+      results.innerHTML = `<div class="px-3 py-2 text-muted">No matches found</div>`;
+    } else {
+      results.innerHTML = data.map(p => `
+        <a href="/professors/${p._id}" class="d-block px-3 py-2 text-dark text-decoration-none border-bottom">
+          <strong>${p.name}</strong> <small class="text-muted">(${p.department})</small>
+        </a>
+      `).join("");
+    }
+
+    results.classList.add("active");
+  });
+
+  document.addEventListener("click", e => {
+    if (!results.contains(e.target) && e.target !== input) {
+      results.classList.remove("active");
+    }
+  });
+});
+</script>
+
+<style>
+/* 🌈 Custom Navbar Styles */
+.custom-navbar {
+  background: linear-gradient(90deg, #007bff, #00b4d8);
+  backdrop-filter: blur(8px);
+}
+
+/* Underline animation for nav links */
+.hover-underline {
+  position: relative;
+}
+.hover-underline::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  display: block;
+  margin-top: 5px;
+  right: 0;
+  background: #fff;
+  transition: width 0.3s ease;
+}
+.hover-underline:hover::after {
+  width: 100%;
+  left: 0;
+  background: #fff;
+}
+
+/* Search bar */
+.search-box {
+  border-radius: 50px;
+  border: 1px solid #e3e3e3;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+}
+.search-box:focus {
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.6);
+  outline: none;
+}
+
+/* Live search results */
+.live-search-results {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  width: 40%;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  z-index: 1050;
+  display: none;
+}
+.live-search-results.active {
+  display: block;
+}
+.live-search-results a:hover {
+  background-color: #f8f9fa;
+}
+.nav-link-modern {
+  position: relative;
+  color: #ffffff !important;
+  font-weight: 600;
+  padding-bottom: 4px;
+  transition: color 0.3s ease;
+}
+
+.nav-link-modern:hover {
+  color: #dff1ff !important;
+}
+
+/* Animated underline */
+.nav-link-modern::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0px;
+  width: 0%;
+  height: 2px;
+  background: #ffffff;
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+.nav-link-modern:hover::after {
+  width: 100%;
+}
+
+
+.btn-outline-light:hover {
+  background: #ffffff !important;
+  color: #007bff !important;
+  border-color: #ffffff !important;
+}
+
+</style>
+

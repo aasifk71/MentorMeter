@@ -1,0 +1,55 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container py-5">
+  <div class="card shadow-lg border-0 rounded-4 p-4 mx-auto" style="max-width: 700px;">
+    <h2 class="fw-bold mb-4 text-primary text-center">Add a New Professor</h2>
+
+    <form action="/professors" method="POST" enctype="multipart/form-data">
+      <!-- Professor Name -->
+      <div class="mb-3">
+        <label for="name" class="form-label fw-semibold">Professor Name</label>
+        <input type="text" id="name" name="professor[name]" class="form-control" placeholder="Enter full name" required>
+      </div>
+
+      <!-- Department -->
+      <div class="mb-3">
+        <label for="department" class="form-label fw-semibold">Department</label>
+        <input type="text" id="department" name="professor[department]" class="form-control" placeholder="Enter department">
+      </div>
+
+      <!-- University (fixed) -->
+      <div class="mb-3">
+        <label for="university" class="form-label fw-semibold">University</label>
+        <select id="university" name="professor[university]" class="form-control" disabled>
+          <option value="Delhi Technological University" selected>Delhi Technological University</option>
+        </select>
+      </div>
+
+      <!-- Description -->
+      <div class="mb-3">
+        <label for="description" class="form-label fw-semibold">Description</label>
+        <textarea id="description" name="professor[description]" class="form-control" rows="4"
+          placeholder="Enter short description about the professor"></textarea>
+      </div>
+
+      <!-- Image Upload with Preview -->
+      <div class="mb-3">
+        <label for="image" class="form-label fw-semibold">Profile Picture (optional)</label>
+        <input type="file" id="image" name="image" class="form-control" accept="image/*" onchange="previewImage(event)">
+        <div class="mt-3 text-center">
+          <img id="imagePreview" src="/images/default-professor.jpg" alt="Profile Preview" class="rounded-circle border shadow-sm"
+            style="width: 120px; height: 120px; object-fit: cover;">
+        </div>
+      </div>
+
+      <button class="btn btn-success w-100 fw-semibold">Add Professor</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function previewImage(event) {
+    const output = document.getElementById('imagePreview');
+    output.src = URL.createObjectURL(event.target.files[0]);
+  }
+</script>

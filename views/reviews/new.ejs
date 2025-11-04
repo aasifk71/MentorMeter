@@ -1,0 +1,68 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container py-5">
+  <div class="card shadow-lg border-0 rounded-4 p-5 mx-auto" style="max-width: 600px;">
+    <h2 class="fw-bold mb-4 text-primary text-center">Leave a Review for <%= professor.name %></h2>
+
+    <form action="/professors/<%= professor._id %>/reviews" method="POST">
+      <!-- Star Rating -->
+      <div class="mb-4 text-center">
+        <label class="form-label d-block fw-semibold mb-2">Your Rating</label>
+        <div id="starRating" class="d-inline-block">
+          <% for (let i = 1; i <= 5; i++) { %>
+            <i class="fa-solid fa-star fs-3 star mx-1" data-value="<%= i %>"></i>
+          <% } %>
+        </div>
+        <input type="hidden" id="ratingInput" name="review[rating]" required>
+      </div>
+
+      <!-- Comment -->
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Your Comment</label>
+        <textarea
+          name="review[comment]"
+          rows="4"
+          class="form-control"
+          placeholder="Write something about the professor..."
+          required
+        ></textarea>
+      </div>
+
+      <button class="btn btn-primary w-100 fw-semibold">Submit Review</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // ⭐ Star Rating Logic
+  const stars = document.querySelectorAll('.star');
+  const ratingInput = document.getElementById('ratingInput');
+  let selected = 0;
+
+  stars.forEach(star => {
+    star.addEventListener('mouseover', () => {
+      resetStars();
+      highlight(star.dataset.value);
+    });
+
+    star.addEventListener('mouseout', () => {
+      resetStars();
+      if (selected > 0) highlight(selected);
+    });
+
+    star.addEventListener('click', () => {
+      selected = star.dataset.value;
+      ratingInput.value = selected;
+    });
+  });
+
+  function highlight(count) {
+    for (let i = 0; i < count; i++) {
+      stars[i].classList.add('text-warning');
+    }
+  }
+
+  function resetStars() {
+    stars.forEach(s => s.classList.remove('text-warning'));
+  }
+</script>

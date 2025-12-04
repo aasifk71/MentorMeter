@@ -136,3 +136,32 @@ h5, h4 {
 .live-search-results a:hover {
   background-color: #f1f1f1;
 }
+/* reviews scroll box (base) */
+.reviews-list {
+  max-height: none;     /* default no limit (server rendered) */
+  overflow-y: visible;
+  transition: max-height .18s ease;
+}
+
+/* when we want scrolling, JS will add .force-scroll */
+.reviews-list.force-scroll {
+  max-height: 320px !important; /* approx 4 items - change if needed */
+  height: 320px !important;
+  overflow-y: auto !important;
+  padding-right: 8px;
+  scroll-behavior: smooth;
+  outline: none;
+}
+
+/* Optional stronger fallback if parents block overflow:
+   an inner wrapper that will get scrolling */
+.reviews-list .reviews-inner {
+  display: block;
+}
+
+/* style review items so height is consistent */
+.review-item { display: block; }
+
+/* scrollbar niceties */
+.reviews-list.force-scroll::-webkit-scrollbar { width: 10px; }
+.reviews-list.force-scroll::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#cfe9ff,#9ecfff); border-radius:8px; }

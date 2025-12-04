@@ -84,49 +84,157 @@
     </div>
   </div>
 
-  <!-- Reviews Section -->
-  <div class="card shadow-sm border-0 rounded-4 p-4 mb-5">
-    <h4 class="fw-bold mb-4 text-primary">Student Reviews</h4>
+  <!-- ===== Student Reviews (updated: auto-enable scroll when >4) ===== -->
+<div class="card shadow-sm border-0 rounded-4 p-4 mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold mb-0 text-primary">Student Reviews</h4>
 
-    <% if (professor.reviews && professor.reviews.length > 0) { %>
-      <% professor.reviews.forEach(review => { %>
-        <div class="border-start border-3 border-primary bg-light-subtle rounded-3 p-3 mb-3 shadow-sm">
-          <div class="d-flex justify-content-between align-items-center">
-            <strong><%= review.author.username %></strong>
-
-            <%
-              const individualAvg = ((review.attendance + review.grading + review.fypSupport) / 3).toFixed(1);
-              const stars = Math.round(individualAvg);
-            %>
-            <span class="text-warning">
-              <% for (let i = 0; i < stars; i++) { %>⭐<% } %>
-              <small class="text-muted"><%= individualAvg %>/5</small>
-            </span>
-          </div>
-
-          <p class="mt-2 mb-1"><%= review.body %></p>
-          <small class="text-muted"><%= review.createdAt ? review.createdAt.toDateString() : "Date not available" %></small>
-
-          <% if (currentUser && (review.author._id.equals(currentUser._id) || currentUser.isAdmin)) { %>
-            <div class="mt-2">
-              <a href="/professors/<%= professor._id %>/reviews/<%= review._id %>/edit"
-                 class="btn btn-sm btn-outline-primary me-2">
-                Edit
-              </a>
-              <form action="/professors/<%= professor._id %>/reviews/<%= review._id %>?_method=DELETE"
-                    method="POST"
-                    class="d-inline"
-                    onsubmit="return confirm('Are you sure you want to delete this review?');">
-                <button class="btn btn-sm btn-outline-danger">Delete</button>
-              </form>
-            </div>
-          <% } %>
-        </div>
-      <% }) %>
-    <% } else { %>
-      <p class="text-muted text-center">No reviews yet.</p>
-    <% } %>
+    <!-- Sort pill dropdown -->
+    <div class="dropdown">
+      <button class="btn btn-outline-primary rounded-pill dropdown-toggle px-4 py-2 sort-pill"
+              id="sortDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" data-current-sort="newest">
+        <span id="sortLabel">Sort Reviews</span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="sortDropdownBtn">
+        <li><a class="dropdown-item sort-option" href="javascript:void(0)" data-sort="newest">Newest</a></li>
+        <li><a class="dropdown-item sort-option" href="javascript:void(0)" data-sort="oldest">Oldest</a></li>
+        <li><a class="dropdown-item sort-option" href="javascript:void(0)" data-sort="best">Top Rated</a></li>
+        <li><a class="dropdown-item sort-option" href="javascript:void(0)" data-sort="worst">Lowest Rated</a></li>
+      </ul>
+    </div>
   </div>
+
+  <% if (professor.reviews && professor.reviews.length > 0) { %>
+    <!-- reviews-list gets .force-scroll via inline server-side when >4 -->
+    <div id="reviewsList"
+     class="reviews-list <%= (professor.reviews && professor.reviews.length > 4) ? 'force-scroll' : '' %>"
+     style="<%= (professor.reviews && professor.reviews.length > 4) ? 'max-height:320px; height:320px; overflow-y:auto;' : '' %>"
+     tabindex="0"
+     aria-label="Student reviews">
+
+        <% professor.reviews.forEach(review => {
+             const individualAvg = ((review.attendance + review.grading + review.fypSupport) / 3);
+             const individualAvgFixed = individualAvg.toFixed(1);
+             const stars = Math.round(individualAvg);
+             const created = review.createdAt ? new Date(review.createdAt).toISOString() : '';
+        %>
+          <div class="review-item border-start border-3 border-primary bg-light-subtle rounded-3 p-3 mb-3 shadow-sm"
+               data-rating="<%= individualAvg %>" data-date="<%= created %>">
+            <div class="d-flex justify-content-between align-items-center">
+              <strong><%= review.author.username %></strong>
+              <span class="text-warning">
+                <% for (let i = 0; i < stars; i++) { %>⭐<% } %>
+                <small class="text-muted"><%= individualAvgFixed %>/5</small>
+              </span>
+            </div>
+            <p class="mt-2 mb-1"><%= review.body %></p>
+            <small class="text-muted"><%= review.createdAt ? review.createdAt.toDateString() : "Date not available" %></small>
+
+            <% if (currentUser && (review.author._id.equals(currentUser._id) || currentUser.isAdmin)) { %>
+              <div class="mt-2">
+                <a href="/professors/<%= professor._id %>/reviews/<%= review._id %>/edit" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                <form action="/professors/<%= professor._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this review?');">
+                  <button class="btn btn-sm btn-outline-danger">Delete</button>
+                </form>
+              </div>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    </div> 
+  <% } else { %>
+    <p class="text-muted text-center">No reviews yet.</p>
+  <% } %>
+</div>
+<!-- ===== end student reviews block ===== -->
+
+<!-- Inline JS: enable scroll after 4 reviews + sorting (fixed) -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const listEl = document.getElementById('reviewsList');
+  const sortBtn = document.getElementById('sortDropdownBtn');
+  const sortLabelEl = document.getElementById('sortLabel');
+
+  if (!listEl || !sortBtn) {
+    console.warn('reviews: required elements missing', { hasList: !!listEl, hasSortBtn: !!sortBtn });
+    return;
+  }
+
+  // Count review items
+  const itemsNodeList = listEl.querySelectorAll('.review-item');
+  const count = itemsNodeList.length;
+
+  // Defensive: ensure force-scroll class + inline styles are present when >4
+  if (count > 4) {
+    listEl.classList.add('force-scroll');
+    // only set inline style if not present
+    if (!listEl.style.maxHeight) {
+      listEl.style.maxHeight = '320px';
+      listEl.style.height = '320px';
+      listEl.style.overflowY = 'auto';
+    }
+  } else {
+    listEl.classList.remove('force-scroll');
+    // optionally clear inline style when <=4
+    // listEl.style.maxHeight = '';
+    // listEl.style.height = '';
+    // listEl.style.overflowY = '';
+  }
+
+  // helper to get items as array
+  function getItems() {
+    return Array.from(listEl.querySelectorAll('.review-item'));
+  }
+
+  // comparator functions
+  const comparators = {
+    newest: (a, b) => (new Date(b.dataset.date || 0)) - (new Date(a.dataset.date || 0)),
+    oldest: (a, b) => (new Date(a.dataset.date || 0)) - (new Date(b.dataset.date || 0)),
+    best: (a, b) => (parseFloat(b.dataset.rating) || 0) - (parseFloat(a.dataset.rating) || 0),
+    worst: (a, b) => (parseFloat(a.dataset.rating) || 0) - (parseFloat(b.dataset.rating) || 0)
+  };
+
+  // sort and render while preserving scrollTop
+  function sortAndRender(mode = 'newest') {
+    // preserve current scroll position (px)
+    const prevScroll = listEl.scrollTop;
+
+    const arr = getItems();
+    arr.sort(comparators[mode] || comparators.newest);
+
+    // append sorted nodes into fragment then replace
+    const frag = document.createDocumentFragment();
+    arr.forEach(node => frag.appendChild(node));
+    listEl.innerHTML = '';
+    listEl.appendChild(frag);
+
+    // restore previous scroll position
+    setTimeout(() => { listEl.scrollTop = prevScroll; }, 0);
+  }
+
+  // expose for debugging if needed
+  window.sortAndRender = sortAndRender;
+
+  // handle clicks on dropdown items (delegation)
+  document.addEventListener('click', function (ev) {
+    const opt = ev.target.closest('.sort-option');
+    if (!opt) return;
+    ev.preventDefault(); // prevent anchor navigation
+    const mode = opt.dataset.sort || 'newest';
+    if (sortLabelEl) sortLabelEl.textContent = opt.textContent.trim();
+    sortAndRender(mode);
+    try { bootstrap.Dropdown.getOrCreateInstance(sortBtn).hide(); } catch (e) {}
+    try { sortBtn.focus(); } catch (e) {}
+  });
+
+  // keyboard scrolling when reviewsList is focused
+  listEl.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown') listEl.scrollBy({ top: 120, behavior: 'smooth' });
+    else if (e.key === 'ArrowUp') listEl.scrollBy({ top: -120, behavior: 'smooth' });
+  });
+});
+</script>
+
 
   <!-- Review Form -->
   <% if (currentUser) { %>

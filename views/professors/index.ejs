@@ -23,6 +23,11 @@
   </div>
 
   <!-- 🔹 Professor Cards -->
+   <%
+  // Sort professors by rating (highest → lowest)
+  professors.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+%>
+
   <% if (professors.length > 0) { %>
     <div class="row g-4" id="professorGrid">
       <% professors.forEach(prof => { %>

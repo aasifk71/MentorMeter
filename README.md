@@ -31,27 +31,33 @@ Students authenticate via **Google OAuth**, browse professor listings, search an
 ![Landing Page](https://github.com/user-attachments/assets/0ab75056-fd0f-4da4-bfb0-58e02c01cf34)
 
 ### Google OAuth Login
-![Google Login](#)
+![Google Login](https://github.com/user-attachments/assets/16808699-621f-4b4a-ad65-a63c27b43e79
+)
 
 ### Professor Dashboard
 - Searchable and filterable professor listings
 - Department-wise categorization
 
-![Dashboard](#)
+![Dashboard](https://github.com/user-attachments/assets/e0ce11df-4c02-4164-92c0-00ab29b0e351
+)
 
 ### Professor Rating Page
 - Attendance
 - Grading Fairness
 - Guidance & Mentorship
 
-![Ratings](#)
+![Ratings](https://github.com/user-attachments/assets/579ec5e5-d93c-455f-987d-0a5994a7b57e
+)
+![](https://github.com/user-attachments/assets/2de03b72-bb19-47bb-9132-b6d8ce4a2cf2)
+
 
 ### Admin Panel
 - Validate Google Form submissions
 - Manage professor listings
 - Upload professor images
 
-![Admin Panel](#)
+![Admin Panel](https://github.com/user-attachments/assets/825a1849-54cb-494e-bceb-aa2ec11ef914
+)
 
 ---
 

@@ -28,7 +28,8 @@ Students authenticate via **Google OAuth**, browse professor listings, search an
 ## Project Walkthrough
 
 ### Landing Page
-![Landing Page](#)
+![<img width="1914" height="1035" alt="Screenshot 2026-01-15 200905" src="https://github.com/user-attachments/assets/0ab75056-fd0f-4da4-bfb0-58e02c01cf34" />
+](#)
 
 ### Google OAuth Login
 ![Google Login](#)

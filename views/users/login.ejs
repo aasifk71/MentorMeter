@@ -1,53 +1,40 @@
 <% layout('layouts/boilerplate') %>
 
-<div class="container py-5">
-  <div class="card shadow-lg border-0 rounded-4 p-5 mx-auto" style="max-width: 450px;">
-    <h2 class="fw-bold mb-4 text-primary text-center">Login</h2>
-
-    <!-- Login Form -->
-    <!-- <form action="/login" method="POST">
-      <div class="mb-3">
-        <label for="username" class="form-label fw-semibold">Username</label>
-        <input type="text" name="username" id="username" class="form-control" placeholder="Enter your username" required>
+<div class="container-xl py-5">
+  <div class="auth-card fade-in">
+    <!-- Brand Icon & Header -->
+    <div class="text-center mb-4">
+      <div class="brand-icon mx-auto mb-3" style="width: 48px; height: 48px; font-size: 1.5rem;">
+        <i class="bi bi-mortarboard-fill"></i>
       </div>
-
-      <div class="mb-3">
-        <label for="password" class="form-label fw-semibold">Password</label>
-        <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required>
-      </div>
-
-      <button type="submit" class="btn btn-primary w-100 fw-semibold">Login</button>
-    </form> -->
-
-    <!-- Divider -->
-    <!-- <hr class="my-4"> -->
-
-    <!-- OAuth Login Options -->
-    <div class="text-center">
-      <!-- <p class="text-muted mb-3">Or continue with</p> -->
-
-      <a href="/auth/google" class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center">
-        <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" width="20" height="20" class="me-2">
-        Continue with Google
-      </a>
-
-      <!-- Uncomment when Microsoft OAuth is ready
-      <a href="/auth/microsoft" class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center">
-        <img src="https://www.svgrepo.com/show/452213/microsoft.svg" alt="Microsoft" width="20" height="20" class="me-2">
-        Continue with Microsoft
-      </a>
-      -->
+      <h2 class="fw-bold text-dark mb-1">Welcome Back</h2>
+      <p class="text-muted small">Sign in to rate faculty and explore peer insights</p>
     </div>
 
-    <!-- Signup Link -->
-    <div class="text-center mt-4">
-      <p class="text-muted mb-0">
-        Don't have an account? 
-        <a href="/signup" class="fw-semibold text-decoration-none">Sign up here</a>.
+    <!-- Primary OAuth Login -->
+    <div class="d-flex flex-column gap-3 mb-4">
+      <a href="/auth/google" class="btn btn-outline-modern w-100 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm">
+        <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" width="20" height="20">
+        <span>Continue with Google</span>
+      </a>
+    </div>
+
+    <!-- Security & Trust Note -->
+    <div class="p-3 bg-light rounded-3 text-center mb-4 border">
+      <div class="d-flex align-items-center justify-content-center gap-2 text-dark small fw-semibold mb-1">
+        <i class="bi bi-shield-check text-success fs-5"></i> DTU Student Authentication
+      </div>
+      <small class="text-muted d-block" style="font-size: 0.78rem;">
+        Your identity is verified securely. Review submissions remain anonymous to protect student privacy.
+      </small>
+    </div>
+
+    <!-- Signup Switch Link -->
+    <div class="text-center pt-2 border-top">
+      <p class="text-muted small mb-0">
+        New to MentorMeter? 
+        <a href="/signup" class="fw-bold text-primary text-decoration-none ms-1">Create an account</a>
       </p>
     </div>
   </div>
 </div>
-
-
-

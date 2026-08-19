@@ -1,11 +1,70 @@
-<footer class="text-center text-muted mt-5 mb-3 py-3 border-top">
-  <p class="mb-1">&copy; 2025 Mentor Meter. All rights reserved.</p>
-  <p class="small mb-0">
-    Developed and maintained by 
-    <a href="https://www.linkedin.com/in/mohd-aasif-80568b2a7" target="_blank" class="text-primary fw-semibold">Mohd Aasif</a> & 
-    <a href="https://www.linkedin.com/in/nakul2004/" target="_blank" class="text-primary fw-semibold">Nakul</a>.
-  </p>
+<footer class="modern-footer">
+  <div class="container-xl">
+    <div class="row g-4 justify-content-between mb-4">
+      <!-- Brand column -->
+      <div class="col-lg-4">
+        <a class="navbar-brand mb-3 d-inline-flex" href="/">
+          <div class="brand-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+          </div>
+          <span>Mentor<span class="text-gradient">Meter</span></span>
+        </a>
+        <p class="text-muted small pe-lg-4 mb-3">
+          MentorMeter is an independent student-driven platform empowering university students with transparent, constructive, and authentic professor reviews.
+        </p>
+        <div class="d-flex gap-2">
+          <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill">
+            <i class="bi bi-mortarboard me-1 text-primary"></i> Delhi Technological University
+          </span>
+        </div>
+      </div>
+
+      <!-- Quick Navigation -->
+      <div class="col-6 col-md-3 col-lg-2">
+        <h6 class="fw-bold text-dark text-uppercase small tracking-wide mb-3">Explore</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+          <li><a href="/" class="footer-link">Home</a></li>
+          <li><a href="/professors" class="footer-link">Professors Directory</a></li>
+          <li><a href="/login" class="footer-link">Student Login</a></li>
+          <li><a href="/signup" class="footer-link">Create Account</a></li>
+        </ul>
+      </div>
+
+      <!-- Community Links -->
+      <div class="col-6 col-md-3 col-lg-2">
+        <h6 class="fw-bold text-dark text-uppercase small tracking-wide mb-3">Community</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+          <li>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSe0xA8IjPMI1prjbXtJGj6nFVsuQ8FQFImkJCQhpssxd8dYvw/viewform?usp=dialog" target="_blank" rel="noopener noreferrer" class="footer-link">
+              <i class="bi bi-box-arrow-up-right me-1"></i> Request Faculty
+            </a>
+          </li>
+          <li><a href="/professors" class="footer-link">Write a Review</a></li>
+          <li><a href="#guidelines" class="footer-link">Review Guidelines</a></li>
+        </ul>
+      </div>
+
+      <!-- Creators & Maintained By -->
+      <div class="col-lg-3">
+        <h6 class="fw-bold text-dark text-uppercase small tracking-wide mb-3">Developed By</h6>
+        <p class="text-muted small mb-2">Designed and built with passion by DTU students:</p>
+        <div class="d-flex flex-column gap-2">
+          <a href="https://www.linkedin.com/in/mohd-aasif-80568b2a7" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light border text-dark text-start btn-sm rounded-3 py-2 px-3 d-flex align-items-center justify-content-between">
+            <span><i class="bi bi-linkedin text-primary me-2"></i> <strong>Mohd Aasif</strong></span>
+            <i class="bi bi-arrow-up-right text-muted small"></i>
+          </a>
+          <a href="https://www.linkedin.com/in/nakul2004/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light border text-dark text-start btn-sm rounded-3 py-2 px-3 d-flex align-items-center justify-content-between">
+            <span><i class="bi bi-linkedin text-primary me-2"></i> <strong>Nakul</strong></span>
+            <i class="bi bi-arrow-up-right text-muted small"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom copyright -->
+    <div class="pt-4 border-top d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+      <small class="text-muted">&copy; <%= new Date().getFullYear() %> MentorMeter. All rights reserved.</small>
+      <small class="text-muted">Empowering smarter course & faculty selection.</small>
+    </div>
+  </div>
 </footer>
-
-
-

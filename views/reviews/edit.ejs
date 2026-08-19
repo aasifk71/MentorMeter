@@ -1,47 +1,71 @@
 <% layout('layouts/boilerplate') %>
 
-<div class="container py-5">
-  <div class="card shadow-lg border-0 rounded-4 p-5 mx-auto" style="max-width: 700px;">
-    <h3 class="fw-bold mb-4 text-primary text-center">Edit Your Review</h3>
+<div class="container-xl py-5">
+  <div class="card shadow-sm border-0 rounded-4 p-4 p-lg-5 mx-auto bg-white" style="max-width: 720px;">
+    <!-- Header -->
+    <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+      <div class="rounded-circle bg-primary-subtle text-primary p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+        <i class="bi bi-pencil-fill fs-5"></i>
+      </div>
+      <div>
+        <h3 class="fw-bold text-dark mb-0">Edit Your Evaluation</h3>
+        <small class="text-muted">Update your review and rating metrics</small>
+      </div>
+    </div>
 
     <form action="/professors/<%= professorId %>/reviews/<%= review._id %>?_method=PUT" method="POST">
+      <!-- Review Body -->
       <div class="mb-4">
-        <label class="form-label fw-semibold">Your Review</label>
-        <textarea name="review[body]" class="form-control" rows="4" placeholder="Share your experience..."><%= review.body %></textarea>
+        <label class="form-label fw-bold">Review Comments</label>
+        <textarea name="review[body]" class="form-control" rows="5" placeholder="Share your experience..." required><%= review.body %></textarea>
       </div>
 
-      <div class="row mb-4 g-3">
+      <!-- Metrics -->
+      <div class="row g-4 mb-4">
+        <!-- Attendance -->
         <div class="col-md-4">
-          <label class="form-label fw-semibold">Attendance</label>
+          <label class="form-label fw-bold">Attendance Strictness</label>
           <select name="review[attendance]" class="form-select">
-            <% for (let i = 1; i <= 5; i++) { %>
-              <option value="<%= i %>" <%= review.attendance === i ? 'selected' : '' %>><%= '⭐'.repeat(i) %></option>
-            <% } %>
+            <option value="5" <%= review.attendance === 5 ? 'selected' : '' %>>⭐⭐⭐⭐⭐ (5 - Strict)</option>
+            <option value="4" <%= review.attendance === 4 ? 'selected' : '' %>>⭐⭐⭐⭐ (4 - Regular)</option>
+            <option value="3" <%= review.attendance === 3 ? 'selected' : '' %>>⭐⭐⭐ (3 - Moderate)</option>
+            <option value="2" <%= review.attendance === 2 ? 'selected' : '' %>>⭐⭐ (2 - Relaxed)</option>
+            <option value="1" <%= review.attendance === 1 ? 'selected' : '' %>>⭐ (1 - Lenient)</option>
           </select>
         </div>
 
+        <!-- Grading -->
         <div class="col-md-4">
-          <label class="form-label fw-semibold">Grading</label>
+          <label class="form-label fw-bold">Grading Fairness</label>
           <select name="review[grading]" class="form-select">
-            <% for (let i = 1; i <= 5; i++) { %>
-              <option value="<%= i %>" <%= review.grading === i ? 'selected' : '' %>><%= '⭐'.repeat(i) %></option>
-            <% } %>
+            <option value="5" <%= review.grading === 5 ? 'selected' : '' %>>⭐⭐⭐⭐⭐ (5 - Very Fair)</option>
+            <option value="4" <%= review.grading === 4 ? 'selected' : '' %>>⭐⭐⭐⭐ (4 - Generally Fair)</option>
+            <option value="3" <%= review.grading === 3 ? 'selected' : '' %>>⭐⭐⭐ (3 - Standard)</option>
+            <option value="2" <%= review.grading === 2 ? 'selected' : '' %>>⭐⭐ (2 - Strict)</option>
+            <option value="1" <%= review.grading === 1 ? 'selected' : '' %>>⭐ (1 - Harsh)</option>
           </select>
         </div>
 
+        <!-- Teaching / FYP -->
         <div class="col-md-4">
-          <label class="form-label fw-semibold">FYP Support</label>
+          <label class="form-label fw-bold">Teaching & Guidance</label>
           <select name="review[fypSupport]" class="form-select">
-            <% for (let i = 1; i <= 5; i++) { %>
-              <option value="<%= i %>" <%= review.fypSupport === i ? 'selected' : '' %>><%= '⭐'.repeat(i) %></option>
-            <% } %>
+            <option value="5" <%= review.fypSupport === 5 ? 'selected' : '' %>>⭐⭐⭐⭐⭐ (5 - Outstanding)</option>
+            <option value="4" <%= review.fypSupport === 4 ? 'selected' : '' %>>⭐⭐⭐⭐ (4 - Helpful)</option>
+            <option value="3" <%= review.fypSupport === 3 ? 'selected' : '' %>>⭐⭐⭐ (3 - Average)</option>
+            <option value="2" <%= review.fypSupport === 2 ? 'selected' : '' %>>⭐⭐ (2 - Minimal)</option>
+            <option value="1" <%= review.fypSupport === 1 ? 'selected' : '' %>>⭐ (1 - Inadequate)</option>
           </select>
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primary w-100 fw-semibold">Update Review</button>
+      <!-- Actions -->
+      <div class="d-flex gap-3 pt-3 border-top">
+        <a href="/professors/<%= professorId %>" class="btn btn-outline-modern btn-pill px-4">Cancel</a>
+        <button type="submit" class="btn btn-primary-modern btn-pill px-5 flex-grow-1">
+          <i class="bi bi-check-circle-fill me-1"></i> Update Review
+        </button>
+      </div>
     </form>
   </div>
 </div>
-
-

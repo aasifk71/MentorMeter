@@ -1,22 +1,23 @@
 <% layout('layouts/boilerplate') %>
 
-<div class="container py-5">
-  <div class="card shadow-lg border-0 rounded-4 p-5 mx-auto text-center" style="max-width: 600px;">
-    <h1 class="display-4 text-danger mb-3">😢 Oops!</h1>
-    <h4 class="fw-semibold mb-4 text-secondary"><%= err.message || "An unexpected error occurred." %></h4>
+<div class="container-xl py-5">
+  <div class="card shadow-sm border-0 rounded-4 p-4 p-lg-5 mx-auto text-center bg-white" style="max-width: 540px;">
+    <div class="rounded-circle bg-danger-subtle text-danger d-inline-flex p-4 mb-3 mx-auto align-items-center justify-content-center" style="width: 80px; height: 80px;">
+      <i class="bi bi-exclamation-circle-fill fs-1"></i>
+    </div>
 
-    <p class="text-muted mb-4">
-      It seems something went wrong. Please try again or contact support if the problem persists.
+    <h2 class="fw-bold text-dark mb-2">Something went wrong</h2>
+    <p class="text-secondary mb-4">
+      <%= (typeof err !== 'undefined' && err && err.message) ? err.message : "An unexpected error occurred while processing your request." %>
     </p>
 
-    <a href="/professors" class="btn btn-primary px-4 me-2 mb-2">
-      <i class="bi bi-arrow-left-circle"></i> Go Back
-    </a>
-    <a href="/" class="btn btn-outline-secondary px-4 mb-2">
-      <i class="bi bi-house-door"></i> Home
-    </a>
+    <div class="d-flex flex-wrap gap-2 justify-content-center">
+      <a href="/professors" class="btn btn-primary-modern btn-pill px-4 py-2">
+        <i class="bi bi-grid me-1"></i> Faculty Directory
+      </a>
+      <a href="/" class="btn btn-outline-modern btn-pill px-4 py-2">
+        <i class="bi bi-house me-1"></i> Return Home
+      </a>
+    </div>
   </div>
 </div>
-
-
-

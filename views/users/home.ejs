@@ -1,158 +1,207 @@
 <% layout('layouts/boilerplate') %>
 
-<!-- Hero Section -->
-<section class="hero-section d-flex align-items-center">
-  <div class="container">
-    <div class="row align-items-center">
+<div class="container-xl py-4 py-lg-5">
+  <!-- Hero Section -->
+  <section class="hero-wrapper fade-in">
+    <div class="row align-items-center g-5">
+      <!-- Left Content -->
+      <div class="col-lg-7 text-center text-lg-start">
+        <div class="hero-pill-tag">
+          <i class="bi bi-stars"></i> Delhi Tech's #1 Faculty Review Platform
+        </div>
+        
+        <h1 class="display-4 fw-extrabold mb-3" style="letter-spacing: -0.03em;">
+          Find the Best Mentors. <br>
+          <span class="text-gradient">Shape Your Academic Journey.</span>
+        </h1>
+        
+        <p class="lead text-muted mb-4 pe-lg-4" style="font-size: 1.15rem; line-height: 1.6;">
+          Authentic student feedback on teaching styles, grading fairness, and FYP mentorship. Make informed course choices backed by genuine peer ratings.
+        </p>
 
-      <!-- Left Content (unchanged) -->
-      <div class="col-md-6 text-center text-md-start">
-        <div class="hero-content fade-in">
-          <h1 class="display-4 fw-bold mb-3 text-gradient">
-            Welcome to Mentor Meter <p class="display-6 fw-bold mb-3 text-gradient">(M-Square)</p>
-          </h1>
-          <p class="lead text-muted mb-4">
-            Your gateway to rate, review, and discover top professors around you.
-          </p>
-          <a href="/professors" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm">
-            <i class="bi bi-search me-2"></i> View Professors
+        <!-- Quick Search Form -->
+        <form action="/professors" method="GET" class="mb-4" style="max-width: 500px;">
+          <div class="p-1 bg-white border rounded-pill shadow-sm d-flex align-items-center">
+            <i class="bi bi-search ms-3 text-muted"></i>
+            <input 
+              type="text" 
+              name="q" 
+              class="form-control border-0 shadow-none px-3 py-2" 
+              placeholder="Search faculty by name or department..."
+              style="font-size: 0.95rem;"
+            >
+            <button type="submit" class="btn btn-primary-modern btn-pill px-4 py-2 me-1">
+              Search
+            </button>
+          </div>
+        </form>
+
+        <!-- Quick CTAs -->
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start gap-3">
+          <a href="/professors" class="btn btn-gradient-modern btn-pill px-4 py-2">
+            <i class="bi bi-compass"></i> Explore All Faculty
+          </a>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSe0xA8IjPMI1prjbXtJGj6nFVsuQ8FQFImkJCQhpssxd8dYvw/viewform?usp=dialog" target="_blank" rel="noopener noreferrer" class="btn btn-outline-modern btn-pill px-4 py-2">
+            <i class="bi bi-plus-lg"></i> Request Professor
           </a>
         </div>
       </div>
 
-      <!-- Right Image -->
-<!-- Right Image -->
-<div class="col-md-6 text-center">
-  <div class="hero-image-card">
-    <img src="/images/professor-illustration.png" alt="Professor" class="hero-img">
-  </div>
+      <!-- Right Visual Card -->
+      <div class="col-lg-5 text-center">
+        <div class="hero-visual-card">
+          <img src="/images/professor-illustration.png" alt="Faculty Review" class="hero-avatar-glow img-fluid mb-3" style="max-height: 280px; object-fit: contain;">
+          
+          <!-- Floating Badge -->
+          <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded-4 border">
+            <div class="d-flex align-items-center gap-2 text-start">
+              <div class="rounded-circle bg-success text-white p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                <i class="bi bi-shield-check fs-5"></i>
+              </div>
+              <div>
+                <strong class="d-block text-dark small">Verified DTU Students</strong>
+                <small class="text-muted">Honest & anonymous ratings</small>
+              </div>
+            </div>
+            <span class="badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill">
+              ★ 4.9 Rating
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Platform Stats Banner -->
+  <section class="hero-stats-banner mb-5 fade-in">
+    <div class="row g-3">
+      <div class="col-6 col-md-3">
+        <div class="stat-item border-end">
+          <div class="stat-number">50+</div>
+          <div class="stat-label">Faculty Profiles</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-item border-end-md">
+          <div class="stat-number">500+</div>
+          <div class="stat-label">Verified Reviews</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-item border-end">
+          <div class="stat-number">10+</div>
+          <div class="stat-label">Departments</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-item">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Student Voice</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why MentorMeter Section -->
+  <section class="py-4 mb-5">
+    <div class="text-center max-w-2xl mx-auto mb-5">
+      <h6 class="text-primary text-uppercase fw-bold tracking-wide small">Platform Pillars</h6>
+      <h2 class="fw-bold display-6">Designed for Better Academic Decisions</h2>
+      <p class="text-muted">We bridge the transparency gap between students and university course mentorship.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-card-modern">
+          <div class="feature-icon-wrapper icon-purple">
+            <i class="bi bi-star-fill"></i>
+          </div>
+          <h5 class="fw-bold mb-2">Granular Ratings</h5>
+          <p class="text-muted small mb-0">
+            Evaluate key dimensions including lecture clarity, study materials, attendance strictness, and grading fairness.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="feature-card-modern">
+          <div class="feature-icon-wrapper icon-cyan">
+            <i class="bi bi-graph-up-arrow"></i>
+          </div>
+          <h5 class="fw-bold mb-2">Real-Time Aggregation</h5>
+          <p class="text-muted small mb-0">
+            Average ratings update instantly with every new review, giving you accurate, up-to-date perspectives across semesters.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="feature-card-modern">
+          <div class="feature-icon-wrapper icon-emerald">
+            <i class="bi bi-shield-lock-fill"></i>
+          </div>
+          <h5 class="fw-bold mb-2">Safe & Constructive</h5>
+          <p class="text-muted small mb-0">
+            Our community guidelines and moderation ensure reviews focus constructively on academic growth and mentorship quality.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3-Step Process -->
+  <section class="py-4 mb-5 p-4 p-lg-5 bg-white border rounded-4 shadow-sm">
+    <div class="text-center mb-5">
+      <h6 class="text-primary text-uppercase fw-bold tracking-wide small">Workflow</h6>
+      <h2 class="fw-bold">How MentorMeter Works</h2>
+    </div>
+
+    <div class="row g-4 text-center">
+      <div class="col-md-4">
+        <div class="p-3">
+          <div class="rounded-circle bg-primary-subtle text-primary fw-bold fs-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 54px; height: 54px;">
+            1
+          </div>
+          <h5 class="fw-bold mb-2">Search Faculty</h5>
+          <p class="text-muted small mb-0">Search by name or filter by DTU department to locate your professor's profile.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-3">
+          <div class="rounded-circle bg-primary-subtle text-primary fw-bold fs-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 54px; height: 54px;">
+            2
+          </div>
+          <h5 class="fw-bold mb-2">Read Insights</h5>
+          <p class="text-muted small mb-0">Review performance charts, grading patterns, and authentic experiences from senior peers.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-3">
+          <div class="rounded-circle bg-primary-subtle text-primary fw-bold fs-4 d-inline-flex align-items-center justify-content-center mb-3" style="width: 54px; height: 54px;">
+            3
+          </div>
+          <h5 class="fw-bold mb-2">Share Feedback</h5>
+          <p class="text-muted small mb-0">Pay it forward by writing your own constructive evaluation after semester exams.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Card -->
+  <section class="p-5 rounded-4 text-white text-center text-lg-start position-relative overflow-hidden mb-4" style="background: var(--hero-gradient);">
+    <div class="row align-items-center g-4 position-relative z-1">
+      <div class="col-lg-8">
+        <h2 class="fw-bold text-white display-6 mb-2">Ready to explore DTU faculty reviews?</h2>
+        <p class="text-light mb-0" style="opacity: 0.9;">Join hundreds of fellow students making better academic choices every semester.</p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <a href="/professors" class="btn btn-light text-primary fw-bold btn-pill px-4 py-3 shadow-lg">
+          Browse Directory <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
 </div>
-
-
-    </div>
-  </div>
-</section>
-
-
-<!-- Features Section -->
-<section class="features-section py-5 text-center">
-  <div class="container">
-    <div class="row g-3"> <!-- reduced gap for tighter look -->
-      <div class="col-md-4">
-        <div class="feature-box border-primary-subtle p-4 rounded-4 shadow-sm h-100 border-top border-3 border-primary bg-white">
-          <i class="bi bi-star-fill text-warning fs-1 mb-3"></i>
-          <h5 class="fw-semibold mb-2 text-primary">Rate Professors</h5>
-          <p class="text-muted small mb-0">
-            Share your experiences and help others make informed choices.
-          </p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="feature-box border-info-subtle p-4 rounded-4 shadow-sm h-100 border-top border-3 border-info bg-white">
-          <i class="bi bi-people-fill text-info fs-1 mb-3"></i>
-          <h5 class="fw-semibold mb-2 text-info">Connect & Compare</h5>
-          <p class="text-muted small mb-0">
-            See how professors are rated by students across departments.
-          </p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="feature-box border-success-subtle p-4 rounded-4 shadow-sm h-100 border-top border-3 border-success bg-white">
-          <i class="bi bi-mortarboard text-success fs-1 mb-3"></i>
-          <h5 class="fw-semibold mb-2 text-success">Discover Excellence</h5>
-          <p class="text-muted small mb-0">
-            Find top-rated professors and courses tailored to your goals.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- Custom Styling -->
-<style>
-/* Hero Section */
-.hero-section {
-  height: 80vh;
-  background: linear-gradient(135deg, #eaf4ff, #f9fbfd);
-  background-image: url('/images/bg-pattern.png'); /* optional pattern */
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.text-gradient {
-  background: linear-gradient(90deg, #007bff, #00b4d8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.feature-box {
-  border-radius: 1rem;
-  transition: all 0.3s ease;
-  background: #fff;
-  cursor: pointer;
-}
-.feature-box:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 30px rgba(0, 123, 255, 0.15);
-  border-color: rgba(0, 123, 255, 0.3);
-}
-
-/* CTA Section */
-.cta-section {
-  background: linear-gradient(90deg, #007bff, #00b4d8);
-  border-radius: 1rem 1rem 0 0; /* rounded top corners for a modern look */
-}
-
-/* Buttons */
-.btn-primary {
-  transition: all 0.3s ease;
-}
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.2);
-}
-.btn-light {
-  transition: all 0.3s ease;
-}
-.btn-light:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.2);
-}
-/* Card container around image */
-.hero-image-card {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  background: #ffffff;
-  padding: 22px 26px;
-  border-radius: 22px; /* rounded corners */
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.08);
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
-}
-
-/* hover effect for the card */
-.hero-image-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
-}
-
-/* Image styling */
-.hero-img {
-  max-width: 480px;
-  width: 100%;
-  border-radius: 12px; /* soften sharp edges of image */
-  animation: float 4s ease-in-out infinite;
-}
-
-/* smooth floating animation */
-@keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-  100% { transform: translateY(0); }
-}
-
-
-</style>

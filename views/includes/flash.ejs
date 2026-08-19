@@ -1,15 +1,42 @@
 <% if (success && success.length > 0) { %>
-  <div class="alert alert-success alert-dismissible fade show my-3 fw-semibold" role="alert">
-    <%= success %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  <div class="flash-container">
+    <div class="flash-alert success alert-dismissible fade show" role="alert">
+      <div class="fs-4 text-success d-flex align-items-center">
+        <i class="bi bi-check-circle-fill"></i>
+      </div>
+      <div class="flex-grow-1">
+        <strong class="d-block text-dark small fw-bold">Success</strong>
+        <span class="text-secondary small"><%= success %></span>
+      </div>
+      <button type="button" class="btn-close ms-auto shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
   </div>
 <% } %>
 
 <% if (error && error.length > 0) { %>
-  <div class="alert alert-danger alert-dismissible fade show my-3 fw-semibold" role="alert">
-    <%= error %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  <div class="flash-container">
+    <div class="flash-alert error alert-dismissible fade show" role="alert">
+      <div class="fs-4 text-danger d-flex align-items-center">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </div>
+      <div class="flex-grow-1">
+        <strong class="d-block text-dark small fw-bold">Notice</strong>
+        <span class="text-secondary small"><%= error %></span>
+      </div>
+      <button type="button" class="btn-close ms-auto shadow-none" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
   </div>
 <% } %>
 
-
+<script>
+  // Auto-dismiss flash alerts after 4.5s
+  document.addEventListener("DOMContentLoaded", () => {
+    const alerts = document.querySelectorAll(".flash-alert");
+    alerts.forEach(alert => {
+      setTimeout(() => {
+        alert.classList.remove("show");
+        setTimeout(() => alert.closest(".flash-container")?.remove(), 300);
+      }, 4500);
+    });
+  });
+</script>

@@ -1,186 +1,273 @@
 <% layout('layouts/boilerplate') %>
 
-<div class="container py-5">
-  <h1 class="text-center fw-bold mb-5 text-primary" style="letter-spacing:-0.5px;">All Professors</h1>
+<div class="container-xl py-4 py-lg-5">
+  <!-- Directory Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <h1 class="display-6 fw-bold mb-0">Faculty Directory</h1>
+        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 fw-semibold" id="profCountBadge">
+          <%= professors.length %> Professors
+        </span>
+      </div>
+      <p class="text-muted mb-0">Browse and compare student evaluations across departments.</p>
+    </div>
 
-  <!-- 🔹 Department Filter Dropdown -->
-  <div class="d-flex justify-content-center mb-5">
-    <div class="dropdown">
-      <button class="btn btn-outline-primary rounded-pill shadow-sm px-4" 
-              type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-        Filter by Department
-      </button>
-      <ul class="dropdown-menu border-0 shadow-sm rounded-4" id="departmentFilter">
-        <li><a class="dropdown-item active rounded-3" href="#" data-filter="all">All Departments</a></li>
-        <% 
-          const departments = [...new Set(professors.map(p => p.department))];
-          departments.forEach(dep => { 
-        %>
-          <li><a class="dropdown-item rounded-3" href="#" data-filter="<%= dep %>"><%= dep %></a></li>
-        <% }) %>
-      </ul>
+    <!-- Quick search input inside directory -->
+    <div class="d-flex align-items-center gap-2" style="max-width: 320px; width: 100%;">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-end-0 rounded-start-pill text-muted ps-3">
+          <i class="bi bi-search"></i>
+        </span>
+        <input 
+          type="text" 
+          id="clientSearchInput" 
+          class="form-control border-start-0 rounded-end-pill py-2 shadow-none" 
+          placeholder="Filter on this page..."
+          value="<%= typeof query !== 'undefined' ? query : '' %>"
+        >
+      </div>
     </div>
   </div>
 
-  <!-- 🔹 Professor Cards -->
-   <%
-  // Sort professors by rating (highest → lowest)
-  professors.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
-%>
+  <!-- Department Filter Chips Bar -->
+  <% 
+    const departments = [...new Set(professors.map(p => p.department).filter(Boolean))];
+  %>
+  <div class="mb-4">
+    <div class="filter-chip-bar py-1" id="deptFilterChips">
+      <button class="filter-chip active" data-filter="all">
+        All Departments <span class="badge bg-light text-dark ms-1"><%= professors.length %></span>
+      </button>
+      <% departments.forEach(dep => { 
+        const count = professors.filter(p => p.department === dep).length;
+      %>
+        <button class="filter-chip" data-filter="<%= dep %>">
+          <%= dep %> <span class="badge bg-light text-dark ms-1"><%= count %></span>
+        </button>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- Sorting & Active Filter Bar -->
+  <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+    <small class="text-muted" id="filterStatusText">Showing all professors</small>
+    
+    <div class="d-flex align-items-center gap-2">
+      <label for="sortSelect" class="small text-muted fw-semibold text-nowrap d-none d-sm-inline">Sort by:</label>
+      <select class="form-select form-select-sm rounded-pill px-3 py-1 border shadow-none" id="sortSelect" style="width: auto;">
+        <option value="highest" selected>Highest Rated</option>
+        <option value="lowest">Lowest Rated</option>
+        <option value="alphabetical">Name (A-Z)</option>
+        <option value="reviews">Most Reviews</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Professor Cards Grid -->
+  <%
+    // Sort professors initially by highest average rating
+    professors.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+  %>
 
   <% if (professors.length > 0) { %>
     <div class="row g-4" id="professorGrid">
-      <% professors.forEach(prof => { %>
-        <div class="col-12 col-sm-6 col-md-4 professor-card" data-department="<%= prof.department %>">
-          <div class="prof-card shadow-sm border-0 rounded-4 p-4 text-center bg-white">
-            <img 
-              src="<%= prof.image && prof.image.url ? prof.image.url : '/images/default-professor.jpg' %>" 
-              alt="<%= prof.name %>" 
-              class="rounded-circle mb-3 border border-3 border-light shadow-sm"
-              style="width:90px; height:90px; object-fit:cover;"
-            >
-
-            <h5 class="fw-semibold mb-1 text-dark"><%= prof.name %></h5>
-            <p class="text-muted mb-2 small"><%= prof.department %></p>
-
-            <div class="rating mb-4">
-              <i class="fa fa-star text-warning"></i>
-              <span class="fw-semibold ms-1 text-dark">
-                <%= prof.averageRating ? prof.averageRating.toFixed(2) : 'N/A' %>
-              </span>
+      <% professors.forEach(prof => { 
+        const rating = prof.averageRating ? prof.averageRating.toFixed(2) : 'N/A';
+        const ratingNum = prof.averageRating || 0;
+        const reviewCount = prof.reviews ? prof.reviews.length : 0;
+        let ratingClass = 'medium';
+        if (ratingNum >= 4.0) ratingClass = 'high';
+      %>
+        <div class="col-12 col-sm-6 col-lg-4 professor-card-item" 
+             data-name="<%= prof.name.toLowerCase() %>" 
+             data-department="<%= (prof.department || '').toLowerCase() %>"
+             data-rating="<%= ratingNum %>"
+             data-reviews="<%= reviewCount %>">
+          <div class="prof-grid-card">
+            <!-- Top Avatar & Rating -->
+            <div class="prof-avatar-wrapper">
+              <img 
+                src="<%= prof.image && prof.image.url ? prof.image.url : '/images/default-professor.jpg' %>" 
+                alt="<%= prof.name %>" 
+                class="prof-avatar-img"
+                onerror="this.src='/images/default-professor.jpg'"
+              >
             </div>
 
-            <a href="/professors/<%= prof._id %>" class="btn btn-primary rounded-pill px-4 w-75 shadow-sm">
-              View Details
+            <!-- Info -->
+            <div class="text-center mb-3 flex-grow-1">
+              <h5 class="fw-bold text-dark mb-1 text-truncate" title="<%= prof.name %>">
+                <%= prof.name %>
+              </h5>
+              <div class="mb-2">
+                <span class="dept-badge text-truncate" style="max-width: 220px;" title="<%= prof.department %>">
+                  <i class="bi bi-building me-1"></i> <%= prof.department || 'General' %>
+                </span>
+              </div>
+              <small class="text-muted d-block mb-3">
+                <i class="bi bi-mortarboard me-1"></i> <%= prof.university || 'Delhi Technological University' %>
+              </small>
+
+              <!-- Rating Badge -->
+              <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                <span class="rating-badge-pill <%= ratingClass %>">
+                  <i class="bi bi-star-fill text-warning"></i>
+                  <span><%= rating %></span>
+                </span>
+                <small class="text-muted">
+                  (<%= reviewCount %> <%= reviewCount === 1 ? 'review' : 'reviews' %>)
+                </small>
+              </div>
+            </div>
+
+            <!-- Card Bottom Action -->
+            <a href="/professors/<%= prof._id %>" class="btn btn-outline-modern w-100 btn-pill">
+              View Profile & Reviews <i class="bi bi-arrow-right ms-1"></i>
             </a>
           </div>
         </div>
       <% }) %>
     </div>
+
+    <!-- Empty State for JS Filters -->
+    <div id="noMatchMessage" class="text-center py-5 d-none">
+      <div class="rounded-circle bg-light d-inline-flex p-4 mb-3 text-muted">
+        <i class="bi bi-search fs-1"></i>
+      </div>
+      <h4 class="fw-bold text-dark">No matching professors found</h4>
+      <p class="text-muted small mb-3">Try adjusting your search keyword or department filter.</p>
+      <button class="btn btn-outline-modern btn-pill px-4" id="resetFiltersBtn">
+        Reset All Filters
+      </button>
+    </div>
+
   <% } else { %>
-    <p class="text-muted text-center mt-5">No professors available yet.</p>
+    <!-- Complete Empty State -->
+    <div class="text-center py-5 bg-white border rounded-4 shadow-sm p-5">
+      <div class="rounded-circle bg-light d-inline-flex p-4 mb-3 text-muted">
+        <i class="bi bi-people fs-1"></i>
+      </div>
+      <h4 class="fw-bold text-dark">No Faculty Profiles Yet</h4>
+      <p class="text-muted mb-4">Be the first to request or add a professor to start the evaluation community.</p>
+      <% if (currentUser && currentUser.isAdmin) { %>
+        <a href="/professors/new" class="btn btn-primary-modern btn-pill px-4">
+          + Add First Professor
+        </a>
+      <% } else { %>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSe0xA8IjPMI1prjbXtJGj6nFVsuQ8FQFImkJCQhpssxd8dYvw/viewform?usp=dialog" target="_blank" class="btn btn-outline-modern btn-pill px-4">
+          Request a Professor
+        </a>
+      <% } %>
+    </div>
   <% } %>
 </div>
 
-<!-- 🔹 JS Filter Script -->
+<!-- Interactive Client-side Filter & Sort Script -->
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const filterItems = document.querySelectorAll("#departmentFilter .dropdown-item");
-    const cards = document.querySelectorAll(".professor-card");
+document.addEventListener("DOMContentLoaded", () => {
+  const chips = document.querySelectorAll(".filter-chip");
+  const searchInput = document.getElementById("clientSearchInput");
+  const sortSelect = document.getElementById("sortSelect");
+  const grid = document.getElementById("professorGrid");
+  const noMatchMsg = document.getElementById("noMatchMessage");
+  const countBadge = document.getElementById("profCountBadge");
+  const filterStatusText = document.getElementById("filterStatusText");
+  const resetBtn = document.getElementById("resetFiltersBtn");
 
-    filterItems.forEach(item => {
-      item.addEventListener("click", (e) => {
-        e.preventDefault();
-        const filter = item.getAttribute("data-filter");
+  if (!grid) return;
 
-        filterItems.forEach(i => i.classList.remove("active"));
-        item.classList.add("active");
+  let currentDept = "all";
+  let currentQuery = (searchInput?.value || "").toLowerCase().trim();
 
-        cards.forEach(card => {
-          const department = card.getAttribute("data-department");
-          if (filter === "all" || department === filter) {
-            card.style.display = "block";
-            card.classList.add("fade-in");
-          } else {
-            card.style.display = "none";
-            card.classList.remove("fade-in");
-          }
-        });
-      });
+  function applyFiltersAndSort() {
+    const cards = Array.from(grid.querySelectorAll(".professor-card-item"));
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      const name = card.getAttribute("data-name") || "";
+      const dept = card.getAttribute("data-department") || "";
+      const matchDept = (currentDept === "all" || dept === currentDept.toLowerCase());
+      const matchQuery = (!currentQuery || name.includes(currentQuery) || dept.includes(currentQuery));
+
+      if (matchDept && matchQuery) {
+        card.style.display = "";
+        visibleCount++;
+      } else {
+        card.style.display = "none";
+      }
+    });
+
+    // Handle empty state
+    if (visibleCount === 0) {
+      noMatchMsg?.classList.remove("d-none");
+      grid.classList.add("d-none");
+    } else {
+      noMatchMsg?.classList.add("d-none");
+      grid.classList.remove("d-none");
+    }
+
+    // Update count badge & text
+    if (countBadge) countBadge.textContent = `${visibleCount} Professors`;
+    if (filterStatusText) {
+      filterStatusText.textContent = `Showing ${visibleCount} professor${visibleCount === 1 ? '' : 's'}${currentDept !== 'all' ? ` in ${currentDept}` : ''}`;
+    }
+
+    // Sort visible cards
+    const sortMode = sortSelect?.value || "highest";
+    cards.sort((a, b) => {
+      const ratingA = parseFloat(a.dataset.rating) || 0;
+      const ratingB = parseFloat(b.dataset.rating) || 0;
+      const reviewsA = parseInt(a.dataset.reviews) || 0;
+      const reviewsB = parseInt(b.dataset.reviews) || 0;
+      const nameA = (a.dataset.name || "");
+      const nameB = (b.dataset.name || "");
+
+      if (sortMode === "highest") return ratingB - ratingA;
+      if (sortMode === "lowest") return ratingA - ratingB;
+      if (sortMode === "reviews") return reviewsB - reviewsA;
+      if (sortMode === "alphabetical") return nameA.localeCompare(nameB);
+      return 0;
+    });
+
+    cards.forEach(card => grid.appendChild(card));
+  }
+
+  // Department Chip Clicks
+  chips.forEach(chip => {
+    chip.addEventListener("click", () => {
+      chips.forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      currentDept = chip.getAttribute("data-filter") || "all";
+      applyFiltersAndSort();
     });
   });
+
+  // Search input live filtering
+  searchInput?.addEventListener("input", (e) => {
+    currentQuery = e.target.value.toLowerCase().trim();
+    applyFiltersAndSort();
+  });
+
+  // Sort dropdown change
+  sortSelect?.addEventListener("change", () => {
+    applyFiltersAndSort();
+  });
+
+  // Reset filters button
+  resetBtn?.addEventListener("click", () => {
+    currentDept = "all";
+    currentQuery = "";
+    if (searchInput) searchInput.value = "";
+    chips.forEach(c => c.classList.remove("active"));
+    chips[0]?.classList.add("active");
+    if (sortSelect) sortSelect.value = "highest";
+    applyFiltersAndSort();
+  });
+
+  // Initial pass if query was present in URL
+  if (currentQuery) {
+    applyFiltersAndSort();
+  }
+});
 </script>
-
-<style>
-  body {
-    background: linear-gradient(180deg, #f9fbff 0%, #eef3fb 100%) !important;
-    font-family: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif !important;
-  }
-
-  /* Heading */
-  h1.text-primary {
-    color: #2D74DA !important;
-    font-weight: 700 !important;
-    letter-spacing: -0.8px !important;
-  }
-
-  /* Filter Button */
-  #filterDropdown.btn-outline-primary {
-    border-color: #2D74DA !important;
-    color: #2D74DA !important;
-    border-radius: 14px !important;
-    font-weight: 500 !important;
-    padding: 10px 24px !important;
-    transition: .25s ease !important;
-  }
-  #filterDropdown.btn-outline-primary:hover {
-    background-color: #2D74DA !important;
-    color: #fff !important;
-  }
-
-  /* Dropdown Menu */
-  .dropdown-menu {
-    border-radius: 16px !important;
-    padding: 8px 0 !important;
-  }
-  .dropdown-item {
-    font-weight: 500 !important;
-    padding: 10px 20px !important;
-    border-radius: 10px !important;
-  }
-  .dropdown-item.active,
-  .dropdown-item:hover {
-    background-color: #2D74DA !important;
-    color: #fff !important;
-  }
-
-  /* Card Styling (Glass + Modern) */
-  .prof-card {
-    border-radius: 22px !important;
-    background: rgba(255, 255, 255, 0.88) !important;
-    backdrop-filter: blur(8px) !important;
-    border: 1px solid rgba(230, 233, 250, 0.6) !important;
-    box-shadow: 0 6px 20px rgba(48, 123, 255, 0.12) !important;
-    transition: all .35s ease !important;
-  }
-  .prof-card:hover {
-    transform: translateY(-6px) scale(1.02) !important;
-    box-shadow: 0 16px 40px rgba(48, 123, 255, 0.18) !important;
-  }
-
-  /* Profile Image Glow */
-  .prof-card img {
-    border: 4px solid #fff !important;
-    box-shadow:
-      0 0 0 3px rgba(45, 116, 218, 0.25),
-      0 10px 20px rgba(0,0,0,0.12) !important;
-    transition: .35s ease !important;
-  }
-  .prof-card:hover img {
-    box-shadow:
-      0 0 0 5px rgba(45, 116, 218, 0.38),
-      0 14px 26px rgba(0,0,0,0.2) !important;
-  }
-
-  /* View Button */
-  .btn-primary {
-    background-color: #2D74DA !important;
-    border-radius: 14px !important;
-    border: none !important;
-    font-weight: 500 !important;
-    transition: .25s ease !important;
-  }
-  .btn-primary:hover {
-    background-color: #1E5DC2 !important;
-    transform: translateY(-2px) !important;
-  }
-
-  .fade-in {
-    animation: fadeIn .35s ease-in-out !important;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-</style>

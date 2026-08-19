@@ -1,68 +1,74 @@
 <% layout('layouts/boilerplate') %>
 
-<div class="container py-5">
-  <div class="card shadow-lg border-0 rounded-4 p-5 mx-auto" style="max-width: 600px;">
-    <h2 class="fw-bold mb-4 text-primary text-center">Leave a Review for <%= professor.name %></h2>
+<div class="container-xl py-5">
+  <div class="card shadow-sm border-0 rounded-4 p-4 p-lg-5 mx-auto bg-white" style="max-width: 720px;">
+    <!-- Header -->
+    <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+      <div class="rounded-circle bg-primary-subtle text-primary p-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+        <i class="bi bi-star-fill fs-5"></i>
+      </div>
+      <div>
+        <h3 class="fw-bold text-dark mb-0">Review for <%= professor.name %></h3>
+        <small class="text-muted"><%= professor.department %> &bull; Delhi Technological University</small>
+      </div>
+    </div>
 
     <form action="/professors/<%= professor._id %>/reviews" method="POST">
-      <!-- Star Rating -->
-      <div class="mb-4 text-center">
-        <label class="form-label d-block fw-semibold mb-2">Your Rating</label>
-        <div id="starRating" class="d-inline-block">
-          <% for (let i = 1; i <= 5; i++) { %>
-            <i class="fa-solid fa-star fs-3 star mx-1" data-value="<%= i %>"></i>
-          <% } %>
-        </div>
-        <input type="hidden" id="ratingInput" name="review[rating]" required>
-      </div>
-
-      <!-- Comment -->
+      <!-- Review Body -->
       <div class="mb-4">
-        <label class="form-label fw-semibold">Your Comment</label>
+        <label class="form-label fw-bold">Detailed Feedback <span class="text-danger">*</span></label>
         <textarea
-          name="review[comment]"
+          name="review[body]"
           rows="4"
           class="form-control"
-          placeholder="Write something about the professor..."
+          placeholder="Describe your classroom experience, interaction, and suggestions..."
           required
         ></textarea>
       </div>
 
-      <button class="btn btn-primary w-100 fw-semibold">Submit Review</button>
+      <!-- Metrics -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-4">
+          <label class="form-label fw-bold">Attendance Strictness</label>
+          <select name="review[attendance]" class="form-select">
+            <option value="5" selected>⭐⭐⭐⭐⭐ (5 - Strict)</option>
+            <option value="4">⭐⭐⭐⭐ (4 - Regular)</option>
+            <option value="3">⭐⭐⭐ (3 - Moderate)</option>
+            <option value="2">⭐⭐ (2 - Relaxed)</option>
+            <option value="1">⭐ (1 - Lenient)</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-bold">Grading Fairness</label>
+          <select name="review[grading]" class="form-select">
+            <option value="5" selected>⭐⭐⭐⭐⭐ (5 - Very Fair)</option>
+            <option value="4">⭐⭐⭐⭐ (4 - Generally Fair)</option>
+            <option value="3">⭐⭐⭐ (3 - Standard)</option>
+            <option value="2">⭐⭐ (2 - Strict)</option>
+            <option value="1">⭐ (1 - Harsh)</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-bold">Teaching & Material</label>
+          <select name="review[fypSupport]" class="form-select">
+            <option value="5" selected>⭐⭐⭐⭐⭐ (5 - Outstanding)</option>
+            <option value="4">⭐⭐⭐⭐ (4 - Helpful)</option>
+            <option value="3">⭐⭐⭐ (3 - Average)</option>
+            <option value="2">⭐⭐ (2 - Minimal)</option>
+            <option value="1">⭐ (1 - Inadequate)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="d-flex gap-3 pt-3 border-top">
+        <a href="/professors/<%= professor._id %>" class="btn btn-outline-modern btn-pill px-4">Cancel</a>
+        <button type="submit" class="btn btn-primary-modern btn-pill px-5 flex-grow-1">
+          <i class="bi bi-send-fill me-1"></i> Submit Evaluation
+        </button>
+      </div>
     </form>
   </div>
 </div>
-
-<script>
-  // ⭐ Star Rating Logic
-  const stars = document.querySelectorAll('.star');
-  const ratingInput = document.getElementById('ratingInput');
-  let selected = 0;
-
-  stars.forEach(star => {
-    star.addEventListener('mouseover', () => {
-      resetStars();
-      highlight(star.dataset.value);
-    });
-
-    star.addEventListener('mouseout', () => {
-      resetStars();
-      if (selected > 0) highlight(selected);
-    });
-
-    star.addEventListener('click', () => {
-      selected = star.dataset.value;
-      ratingInput.value = selected;
-    });
-  });
-
-  function highlight(count) {
-    for (let i = 0; i < count; i++) {
-      stars[i].classList.add('text-warning');
-    }
-  }
-
-  function resetStars() {
-    stars.forEach(s => s.classList.remove('text-warning'));
-  }
-</script>

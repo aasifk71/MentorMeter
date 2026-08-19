@@ -17,6 +17,18 @@ const authRoutes = require("./routes/auth");
 
 const app = express();
 
+// Set up Views directory using process.cwd() for Vercel Lambda compatibility
+const viewsPath = path.join(process.cwd(), "views");
+app.engine("ejs", ejsMate);
+app.set("view engine", "ejs");
+app.set("views", viewsPath);
+
+// Request parsing & Static assets
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(methodOverride('_method'));
+app.use(express.static(path.join(process.cwd(), "public")));
+
 // MongoDB Connection with Serverless Connection Caching
 const dbUrl = process.env.DB_URL || "mongodb://127.0.0.1:27017/professor-rating";
 
@@ -37,24 +49,17 @@ async function connectToDatabase() {
   }
 }
 
-// Ensure database connection middleware
+// Ensure database connection middleware (non-blocking for static/home)
 app.use(async (req, res, next) => {
-  if (mongoose.connection.readyState !== 1) {
-    await connectToDatabase();
+  if (mongoose.connection.readyState !== 1 && process.env.DB_URL) {
+    try {
+      await connectToDatabase();
+    } catch (e) {
+      console.warn("DB connection attempt failed:", e.message);
+    }
   }
   next();
 });
-
-// EJS Template Engine Setup
-app.engine("ejs", ejsMate);
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
-
-// Request parsing & Static assets
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(methodOverride('_method'));
-app.use(express.static(path.join(__dirname, "public")));
 
 // Session Configuration
 const sessionSecret = process.env.SECRET || process.env.SESSION_SECRET || "mentormetersecretkey!";
@@ -78,8 +83,12 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// Register Google / Microsoft OAuth Strategies
-require("./passport-config");
+// Register Google / Microsoft OAuth Strategies (safe fallback)
+try {
+  require("./passport-config");
+} catch (e) {
+  console.warn("Passport config warning:", e.message);
+}
 
 // Global View Locals Middleware
 app.use((req, res, next) => {
@@ -102,17 +111,44 @@ app.get("/", (req, res) => {
 
 // 404 Fallback Handler
 app.all("*", (req, res, next) => {
-  res.status(404).render("professors/error", {
-    err: { message: `Page not found: ${req.originalUrl}` }
-  });
+  try {
+    res.status(404).render("professors/error", {
+      err: { message: `Page not found: ${req.originalUrl}` }
+    });
+  } catch (err) {
+    res.status(404).send("Page not found");
+  }
 });
 
-// Global Error Handler
+// Bulletproof Global Error Handler (Prevents Lambda Crash)
 app.use((err, req, res, next) => {
-  const { statusCode = 500 } = err;
-  if (!err.message) err.message = "An unexpected error occurred.";
+  const statusCode = err.statusCode || 500;
   console.error("🚨 Server Error:", err);
-  res.status(statusCode).render("professors/error", { err });
+  try {
+    res.status(statusCode).render("professors/error", { 
+      err: { message: err.message || "An unexpected error occurred." } 
+    });
+  } catch (renderErr) {
+    console.error("🚨 View Render Error:", renderErr);
+    res.status(statusCode).send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>MentorMeter - Notice</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+      </head>
+      <body class="bg-light d-flex align-items-center justify-content-center min-vh-100 p-4">
+        <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 text-center bg-white" style="max-width: 500px;">
+          <h3 class="fw-bold text-danger mb-2">Notice</h3>
+          <p class="text-secondary mb-4">${err.message || "A server error occurred. If you are setting up Vercel, please verify your DB_URL environment variable in the Vercel Dashboard."}</p>
+          <a href="/" class="btn btn-primary rounded-pill px-4">Return Home</a>
+        </div>
+      </body>
+      </html>
+    `);
+  }
 });
 
 // Start local server if not on serverless environment

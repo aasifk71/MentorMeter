@@ -80,10 +80,16 @@ app.use("/auth", authRoutes);
 require("./passport-config"); // ensures Google/Microsoft strategies are registered
 // ✅ Added for Google & Microsoft login END
 
-// Start server
-app.listen(3000, () => {
-  console.log("Serving on port 3000");
-});
+// Start server if not running in a serverless environment
+const PORT = process.env.PORT || 3000;
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Serving on port ${PORT}`);
+  });
+}
+
+module.exports = app;
+
 
 
 
